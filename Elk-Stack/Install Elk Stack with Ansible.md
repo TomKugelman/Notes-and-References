@@ -18,20 +18,36 @@ Given that this installation is based on ansible playbooks, you have the ability
 
  ![ansible-etc-file-example](ansible-hosts-file-example-entry.PNG)
 
-- Clone the git repository mentioned at the top of this file (YOUR forked version)
+- Clone the git repository mentioned at the top of this file (YOUR forked version). NOTE: This repo cannot be cloned without first being forked from Daniel Berman's github.
 
 ## Modifications to existing files
 ### Change target java repository
 - The ppa that the java ansible role attempts to download no longer has a verified release so the APT package manager will by default refuse to download it. Replace the contents of the ansible-elk-playbook/roles/java/tasks/main.yml with this:
 
-`
-    - name: Install Java 8
-
-    apt:
-
+``` 
+- name: Install Java 8
+  apt:
     name: openjdk-8-jdk
-
     state: present
-
     update_cache: yes 
-   `
+```
+
+- Modify the <strong>site.yml<strong> file located at the root of the repository. Open it in whatever text editor you have available.
+- Change the "remote_user" to the user on your client machine (If using an ubuntu based EC2 instance as your client, leave this as ubuntu)
+
+## Execute ansible playbook
+- Let's first make sure ansible can reach our targets by executing the follow command.
+```
+ansible elkservers -m ping
+```
+- If the above command returned "UNREACHABLE", but you can succesfully SSH from your server to client with no password prompt, it is likely a typo in your /etc/hosts or /etc/ansible/hosts file. The latter is looking at your /etc/hosts file so make sure they are written the same.
+- If that succeeded then let's run our playbook with the following command from the repositories root directory:
+```
+sudo ansible-playbook site.yml
+```
+- You should see ansible go through each role and download the respective packages.
+- Start the Kibana service with:
+```
+sudo service kibana start
+```
+- The kibana dashboard is available by default at <clientIP>:5601
