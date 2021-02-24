@@ -50,4 +50,4 @@ sudo ansible-playbook site.yml
 ```
 sudo service kibana start
 ```
-- The kibana dashboard is available by default at <clientIP>:5601
+- The kibana dashboard is available by default at clientIP:5601
